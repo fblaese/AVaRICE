@@ -2599,8 +2599,8 @@ jtag_device_def_type deviceDefinitions[] = {
 	    { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 	      0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 	      0x00,0x00,0x00,0x00 }, // ucWriteIOExtShadow
-	    0x00,	// ucIDRAddress
-	    0X00,	// ucSPMCRAddress
+	    0x27,	// ucIDRAddress
+	    0X57,	// ucSPMCRAddress
 	    0,	// ucRAMPZAddress
 	    fill_b2(32),	// uiFlashPageSize
 	    4,	// ucEepromPageSize
@@ -4115,8 +4115,8 @@ jtag_device_def_type deviceDefinitions[] = {
 	    { 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 	      0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 	      0x00,0x00,0x00,0x00 }, // ucWriteIOExtShadow
-	    0x00,	// ucIDRAddress
-	    0X00,	// ucSPMCRAddress
+	    0x31,	// ucIDRAddress
+	    0X57,	// ucSPMCRAddress
 	    0,	// ucRAMPZAddress
 	    fill_b2(128),	// uiFlashPageSize
 	    4,	// ucEepromPageSize
@@ -4132,7 +4132,7 @@ jtag_device_def_type deviceDefinitions[] = {
 	    fill_b2(32768 / 128),	// uiFlashpages
 	    0x31,	// ucDWDRAddress
 	    0x00,	// ucDWBasePC
-	    0x00,	// ucAllowFullPageBitstream
+	    0x01,	// ucAllowFullPageBitstream
 	    fill_b2(0x3F00),	// uiStartSmallestBootLoaderSection
 	    1,	// EnablePageProgramming
 	    0,	// ucCacheType
