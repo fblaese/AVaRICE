@@ -201,7 +201,8 @@ void jtag3::expectEvent(bool &breakpoint, bool &gdbInterrupt)
       // a good degree.
       case (SCOPE_AVR << 8) | EVT3_BREAK:
           if ((!is_xmega && evtbuf[7] != 0) ||
-              (is_xmega && evtbuf[7] != 0x40))
+              (is_xmega && evtbuf[7] != 0x40) ||
+              (is_edbg && evtbuf[6] != 0))
           {
               // program breakpoint
               cached_pc = 2 * b4_to_u32(evtbuf + 2);
