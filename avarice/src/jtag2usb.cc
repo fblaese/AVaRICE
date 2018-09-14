@@ -1241,7 +1241,7 @@ static void *hid_thread(void * data)
 	  if (rv < 0)
 	    throw jtag_exception("Querying for event: hid_write() failed");
 
-	  rv = hid_read_timeout(hdev, buf, hdata->max_pkt_size + 1, 50);
+	  rv = hid_read_timeout(hdev, buf, hdata->max_pkt_size + 1, 1000);
 	  if (rv <= 0)
 	  {
 	    debugOut("Querying for event: hid_read() failed (%d)\n",
@@ -1346,7 +1346,7 @@ static void *hid_thread(void * data)
 		if (rv < 0)
 		  throw jtag_exception("Querying for response: hid_write() failed");
 
-		rv = hid_read_timeout(hdev, buf + offset, hdata->max_pkt_size + 1, 500);
+		rv = hid_read_timeout(hdev, buf + offset, hdata->max_pkt_size + 1, 1000);
 		if (rv <= 0)
 		{
 		  debugOut("Querying for response: hid_read() failed (%d)\n",
