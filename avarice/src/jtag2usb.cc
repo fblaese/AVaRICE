@@ -641,8 +641,15 @@ static hid_device *openhid(const char *jtagDeviceName, unsigned int &max_pkt_siz
     return NULL;
 
   walk = list;
+
   while (walk)
     {
+      if (walk->product_string == NULL)
+	{
+	  fprintf(stderr, "Unknown error: Could not read product string from Atmel device.\n");
+	  continue;
+	}
+
       if (wcsstr(walk->product_string, L"CMSIS-DAP") != NULL)
 	{
 	  debugOut("Found HID PID:VID 0x%04x:0x%04x, serno %ls\n",
