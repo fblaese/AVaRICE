@@ -83,6 +83,24 @@ jtag3::~jtag3(void)
     {
       try
       {
+        doSimpleJtagCommand(CMD3_CLEANUP, "cleanup");
+      }
+      catch (jtag_exception&)
+      {
+        // just proceed with the sign-off
+      }
+
+      try
+      {
+        doSimpleJtagCommand(CMD3_GO, "go");
+      }
+      catch (jtag_exception&)
+      {
+        // just proceed with the sign-off
+      }
+
+      try
+      {
 	doSimpleJtagCommand(CMD3_STOP_DEBUG, "stop debugging");
       }
       catch (jtag_exception&)

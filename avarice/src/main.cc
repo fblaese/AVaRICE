@@ -39,6 +39,7 @@
 #include <unistd.h>
 #include <netinet/tcp.h>
 #include <fcntl.h>
+#include <signal.h>
 
 #include "avarice.h"
 #include "remote.h"
@@ -49,6 +50,12 @@
 #include "gnu_getopt.h"
 
 bool ignoreInterrupts;
+
+static volatile int gfd;
+
+static void handleIntSig(int sig){
+    close(gfd);
+}
 
 static int makeSocket(struct sockaddr_in *name)
 {
@@ -377,6 +384,11 @@ int main(int argc, char **argv)
     unsigned int units_after = 0;
     unsigned int bits_before = 0;
     unsigned int bits_after = 0;
+
+    struct sigaction sa;
+    sa.sa_handler = handleIntSig;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = SA_RESTART;
 
     statusOut("AVaRICE version %s, %s %s\n\n",
 	      PACKAGE_VERSION, __DATE__, __TIME__);
@@ -749,11 +761,13 @@ int main(int argc, char **argv)
 
             // Connection request on original socket.
             socklen_t size = (socklen_t)sizeof(clientname);
-            int gfd = accept(sock, (struct sockaddr *)&clientname, &size);
+            gfd = accept(sock, (struct sockaddr *)&clientname, &size);
             if (gfd < 0)
                 throw jtag_exception();
             statusOut("Connection opened by host %s, port %hu.\n",
                       inet_ntoa(clientname.sin_addr), ntohs(clientname.sin_port));
+
+            sigaction(SIGINT, &sa, NULL);
 
             setGdbFile(gfd);
 
