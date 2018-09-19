@@ -494,7 +494,38 @@ void jtag3::startJtagLink(void)
   cmd[2] = 0;
   cmd[3] = proto == PROTO_JTAG && apply_nSRST;
 
-  doJtagCommand(cmd, 4, "AVR sign-on", resp, respsize);
+  try {
+    doJtagCommand(cmd, 4, "AVR sign-on", resp, respsize);
+  } catch (jtag3_io_exception e) {
+    //power cycle Xplained Mini to reevalute debugWIRE Fuse and try again
+    if (is_medbg && e.get_response() == RSP3_FAIL_DEBUGWIRE) {
+        statusOut("%s\n", e.what());
+        statusOut("Trying to power-cycle target.\n");
+        uchar powercmd[6];
+
+        powercmd[0] = 0x20;
+        powercmd[1] = 0x21;
+        powercmd[2] = 0x00;
+        powercmd[3] = 0x00;
+        powercmd[4] = 0x00;
+        powercmd[5] = 0x00;
+        doJtagCommand(powercmd, 6, "mEDBG: Power Off Target", resp, respsize);
+
+        powercmd[0] = 0x20;
+        powercmd[1] = 0x21;
+        powercmd[2] = 0x00;
+        powercmd[3] = 0x88;
+        powercmd[4] = 0x13;
+        powercmd[5] = 0x00;
+        doJtagCommand(powercmd, 6, "mEDBG: Power On Target", resp, respsize);
+
+        //retry sign-on after some time
+        usleep(500 * 1000);
+        doJtagCommand(cmd, 4, "AVR sign-on", resp, respsize);
+    } else {
+        throw e;
+    }
+  }
 
   if (resp[1] == RSP3_DATA && respsize >= 6)
   {
