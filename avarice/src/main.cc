@@ -164,6 +164,8 @@ static void usage(const char *progname)
     fprintf(stderr,
             "  -4, --edbg                  Atmel-ICE, or JTAGICE3 (firmware 3.x), or EDBG Integrated Debugger\n");
     fprintf(stderr,
+            "  -5, --medbg                 mEDBG Integrated Debugger\n");
+    fprintf(stderr,
             "  -B, --jtag-bitrate <rate>   Set the bitrate that the JTAG box communicates\n"
             "                                with the avr target device. This must be less\n"
             "                                than 1/4 of the frequency of the target. Valid\n"
@@ -307,6 +309,7 @@ static struct option long_opts[] = {
     { "mkII",                0,       0,     '2' },
     { "jtag3",               0,       0,     '3' },
     { "edbg",                0,       0,     '4' },
+    { "medbg",               0,       0,     '5' },
     { "jtag-bitrate",        1,       0,     'B' },
     { "capture",             0,       0,     'C' },
     { "daisy-chain",         1,       0,     'c' },
@@ -363,6 +366,7 @@ int main(int argc, char **argv)
     bool verify = false;
     bool apply_nsrst = false;
     bool is_xmega = false;
+    bool is_medbg = false;
     char *progname = argv[0];
     enum {
 	MKI, MKII, DRAGON, JTAG3, EDBG
@@ -383,7 +387,7 @@ int main(int argc, char **argv)
 
     while (1)
     {
-        int c = getopt_long (argc, argv, "1234B:Cc:DdeE:f:ghIj:kL:lP:pRrVvwW:xX",
+        int c = getopt_long (argc, argv, "12345B:Cc:DdeE:f:ghIj:kL:lP:pRrVvwW:xX",
                              long_opts, &option_index);
         if (c == -1)
             break;              /* no more options */
@@ -404,6 +408,14 @@ int main(int argc, char **argv)
 		devicetype = JTAG3;
 		break;
             case '4':
+                devicetype = EDBG;
+                break;
+            case '5':
+                /* mEDBG is a subset of EDBG, therefore *most* parts are same.
+                 * You only need 'is_medbg' for one different command, otherwise
+                 * we will use the edbg implementation.
+                 */
+                is_medbg = true;
                 devicetype = EDBG;
                 break;
             case 'B':
@@ -599,7 +611,7 @@ int main(int argc, char **argv)
 
 	case EDBG:
 	    theJtagICE = new jtag3(jtagDeviceName, device_name, proto,
-				   apply_nsrst, is_xmega, true);
+				   apply_nsrst, is_xmega, is_medbg, true);
 	    break;
 	}
 

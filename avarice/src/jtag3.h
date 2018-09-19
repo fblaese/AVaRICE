@@ -187,6 +187,7 @@ class jtag3: public jtag
     unsigned long cached_pc;
     bool cached_pc_is_valid;
     bool is_edbg;
+    bool is_medbg;
 
     unsigned char flashCache[MAX_FLASH_PAGE_SIZE];
     unsigned int flashCachePageAddr;
@@ -202,13 +203,15 @@ class jtag3: public jtag
     jtag3(const char *dev, char *name, enum debugproto prot = PROTO_JTAG,
 	  bool nsrst = false,
           bool xmega = false,
-          bool edbg = false):
+          bool edbg = false,
+          bool medbg = false):
         jtag(dev, name, edbg? EMULATOR_EDBG: EMULATOR_JTAGICE3) {
 	signedIn = debug_active = false;
 	command_sequence = 0;
 	proto = prot;
 	apply_nSRST = nsrst;
         is_xmega = xmega;
+        is_medbg = medbg;
 	xmega_n_bps = 0;
 	flashCachePageAddr = (unsigned int)-1;
 	eepromCachePageAddr = (unsigned short)-1;
